@@ -310,7 +310,7 @@ const renderMode = "image";
 $.ajax({
   method: "GET",
   url:
-    "https://gist.githubusercontent.com/agiano/fcf95837669f13d9d283e97dc8d88100/raw/eb9b4ae3fb94dcff0c38f54e6859270011f5c563/states_data.geojson",
+    "https://gist.githubusercontent.com/agiano/fcf95837669f13d9d283e97dc8d88100/raw/010c241c083dbfade920df599d8beb91922a85fd/states_data.geojson",
   dataType: "json",
   crossOrigin: "Anonymous",
 }).done(function (data) {
