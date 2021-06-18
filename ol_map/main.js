@@ -21,6 +21,9 @@ const projection = "EPSG:3857";
 const mapExtent = [-21000000, -20000000, 21000000, 20000000];
 const mapCenter = [2000000, 5000000];
 
+const pointBbox = [11.18, 41, 13, 42.54]
+
+
 const geoJSONformat = new ol.format.GeoJSON({
   dataProjection: "EPSG:4326",
   featureProjection: projection,
@@ -29,21 +32,8 @@ const topoJSONformat = new ol.format.TopoJSON({
   layers: ["coastMerged"],
 });
 const esriJSONformat = new ol.format.EsriJSON({});
-const hoverStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: "rgb(0,0,0)",
-    width: 1,
-  }),
-  fill: new ol.style.Fill({
-    color: "rgba(100, 191, 201, 0.60)",
-  }),
-  text: new ol.style.Text({
-    font: "italic 20px serif",
-    fill: new ol.style.Fill({ color: "rgba(142, 39, 39)" }),
-    // overflow: true,
-    stroke: new ol.style.Stroke({ color: "#ffffff", width: 0.7 }),
-  }),
-});
+
+
 const oceanStyle = function (feature, resolution) {
   return [
     new ol.style.Style({
@@ -77,28 +67,33 @@ const coastStyle = function (feature, resolution) {
     }),
   ];
 };
-function getMapRes(res) {
-  return map.getView().getResolutionForZoom(res);
+function getMapRes(z) {
+  return map.getView().getResolutionForZoom(z);
 }
 const stateLabelCheckbox = document.getElementById("check-4-1");
 const stateText = function (feature, resolution) {
-  const maxRes = getMapRes(3.5);
-  const minRes = getMapRes(6.5);
   let text = "";
   if (stateLabelCheckbox.checked === true) {
-    if (resolution <= maxRes || resolution <= minRes) {
-      text = feature.get("name");
-    }
+    text = feature.get("name");
   }
+
   return text;
 };
 const stateScale = function (feature, resolution) {
   let scale = 1.5;
-  if (projection === "EPSG:3857") {
-    scale = 20000 / resolution;
+  const maxResolution = getMapRes(6);
+  if (resolution <= maxResolution) {
+    scale = 2;
+  }
+  if (resolution >= maxResolution && projection === "EPSG:3857") {
+    scale = 18000 / resolution;
   }
   return scale;
 };
+const stateColor = function (feature, resolution) {
+  let color = feature.get("color")
+  return color
+}
 const stateStyle = function (feature, resolution) {
   return [
     new ol.style.Style({
@@ -107,15 +102,15 @@ const stateStyle = function (feature, resolution) {
       //   width: 1,
       // }),
       fill: new ol.style.Fill({
-        color: "rgba(100, 191, 201, 1)",
+        color: stateColor(feature, resolution),
       }),
       text: new ol.style.Text({
         font: "italic 10px serif",
-        fill: new ol.style.Fill({ color: "rgba(142, 39, 39)" }),
+        fill: new ol.style.Fill({ color: "rgb(255, 255, 255)" }),
         overflow: true,
         scale: stateScale(feature, resolution),
         text: stateText(feature, resolution),
-        stroke: new ol.style.Stroke({ color: "#ffffff", width: 0.5 }),
+        stroke: new ol.style.Stroke({ color: "rgb(0, 0, 0)", width: 0.4 }),
       }),
     }),
   ];
@@ -129,6 +124,22 @@ const pleiadesText = function (feature, resolution) {
   }
   return text;
 };
+const hoverStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({
+    color: "rgb(0,0,0)",
+    width: 1,
+  }),
+  fill: new ol.style.Fill({
+    color: "rgba(100, 191, 201, 0.60)",
+  }),
+  text: new ol.style.Text({
+    font: "italic 20px serif",
+    fill: new ol.style.Fill({ color: "rgb(255, 255, 255)" }),
+    overflow: true,
+    stroke: new ol.style.Stroke({ color: "rgb(0, 0, 0)", width: 1.5 }),
+  }),
+});
+
 const pleiadesStyle = function (feature, resolution) {
   return [
     new ol.style.Style({
@@ -187,7 +198,6 @@ function checkArrayItem(arr, value) {
 // } //end of window.load //
 const map = new ol.Map({
   view: new ol.View({
-    // projection: "EPSG:4326",
     projection: projection,
     center: mapCenter,
     zoom: 5,
@@ -197,7 +207,11 @@ const map = new ol.Map({
   }),
   layers: [],
   target: "map",
-  controls: ol.control.defaults({ attribution: false, zoom: false }),
+  controls: ol.control.defaults({
+    attribution: false,
+    zoom: false,
+    rotate: false,
+  }),
 });
 //#endregion
 
@@ -304,7 +318,7 @@ layerSelect.addEventListener("change", function () {
 
 //#region //------ Vector Layers ------//
 
-// const renderMode = "vector"
+// const renderMode = "vector";
 const renderMode = "image";
 
 $.ajax({
@@ -375,147 +389,153 @@ $.ajax({
   });
 });
 check2.addEventListener("change", function ajaxwater(e) {
-$.ajax({
-  method: "GET",
-  url:
-    // "https://gist.githubusercontent.com/agiano/0948d99dbbafe16e7dea60911b8f4c2e/raw/78b14f82082204395262541e6990a679a8f92668/waterjson.geojson",
-    "https://gist.githubusercontent.com/agiano/2a0e9fc232dbb21ef50baa15f413c40b/raw/f7c4b3e5cbea4d34bb774f3168e4f819b71edbb8/waterjson.geojson",
-  dataType: "json",
-  crossOrigin: "Anonymous",
-}).done(function (data) {
-  const dataSource = new ol.source.Vector({
-    features: geoJSONformat.readFeatures(data),
-  });
-  const dataLayer = new ol.layer.Vector({
-    source: dataSource,
-    style: oceanStyle,
-    renderMode: renderMode,
-    extent: mapExtent,
-    visible: false,
-    id: 2,
-  });
-  map.addLayer(dataLayer);
-  if (check2.checked == true) {
-    dataLayer.setVisible(true);
-  } else {
-    dataLayer.setVisible(false);
-  }
-  check2.addEventListener("change", function (e) {
+  $.ajax({
+    method: "GET",
+    url:
+      // "https://gist.githubusercontent.com/agiano/0948d99dbbafe16e7dea60911b8f4c2e/raw/78b14f82082204395262541e6990a679a8f92668/waterjson.geojson",
+      "https://gist.githubusercontent.com/agiano/2a0e9fc232dbb21ef50baa15f413c40b/raw/f7c4b3e5cbea4d34bb774f3168e4f819b71edbb8/waterjson.geojson",
+    dataType: "json",
+    crossOrigin: "Anonymous",
+  }).done(function (data) {
+    const dataSource = new ol.source.Vector({
+      features: geoJSONformat.readFeatures(data),
+    });
+    const dataLayer = new ol.layer.Vector({
+      source: dataSource,
+      style: oceanStyle,
+      renderMode: renderMode,
+      extent: mapExtent,
+      visible: false,
+      id: 2,
+    });
+    map.addLayer(dataLayer);
     if (check2.checked == true) {
       dataLayer.setVisible(true);
     } else {
       dataLayer.setVisible(false);
     }
+    check2.addEventListener("change", function (e) {
+      if (check2.checked == true) {
+        dataLayer.setVisible(true);
+      } else {
+        dataLayer.setVisible(false);
+      }
+    });
   });
+  check2.removeEventListener("change", ajaxwater);
 });
-check2.removeEventListener("change", ajaxwater)
-})
 check3.addEventListener("change", function ajaxrivers(e) {
+  $.ajax({
+    method: "GET",
+    url:
+      "https://gist.githubusercontent.com/agiano/b65bb8bee66dfbd4e4e3381d565dcfa6/raw/14f0af16eceede3b72eae8cf6e75f1792029a810/bigrivers(10).geojson",
+    dataType: "json",
+    crossOrigin: "Anonymous",
+  }).done(function (data) {
+    const dataSource = new ol.source.Vector({
+      features: geoJSONformat.readFeatures(data),
+    });
+    const dataLayer = new ol.layer.Vector({
+      source: dataSource,
+      style: riverStyle,
+      renderMode: renderMode,
+      extent: mapExtent,
+      visible: false,
+      id: 3,
+    });
+    map.addLayer(dataLayer);
+    if (check3.checked == true) {
+      dataLayer.setVisible(true);
+    } else {
+      dataLayer.setVisible(false);
+    }
+    check3.addEventListener("change", function (e) {
+      if (check3.checked == true) {
+        dataLayer.setVisible(true);
+      } else {
+        dataLayer.setVisible(false);
+      }
+    });
+  });
+  check3.removeEventListener("change", ajaxrivers);
+});
+check1.addEventListener("change", function ajaxcoast(e) {
+  $.ajax({
+    method: "GET",
+    url:
+      "https://gist.githubusercontent.com/agiano/4b0c212f4038ab5d205b8455ffecf243/raw/68ee974227cff676de7d8de43b8001780006d35c/topo-coast(10).json",
+    dataType: "json",
+    crossOrigin: "Anonymous",
+  }).done(function (data) {
+    // console.log("ajax loaded")
+
+    const dataSource = new ol.source.Vector({
+      features: topoJSONformat.readFeatures(data, {
+        dataProjection: "EPSG:4326",
+        featureProjection: projection,
+      }),
+    });
+    const dataLayer = new ol.layer.Vector({
+      source: dataSource,
+      style: coastStyle,
+      renderMode: renderMode,
+      extent: mapExtent,
+      visible: false,
+      id: 4,
+    });
+    map.addLayer(dataLayer);
+    if (check1.checked == true) {
+      dataLayer.setVisible(true);
+    } else {
+      dataLayer.setVisible(false);
+    }
+    check1.addEventListener("change", function (e) {
+      if (check1.checked == true) {
+        dataLayer.setVisible(true);
+      } else {
+        dataLayer.setVisible(false);
+      }
+    });
+  });
+  check1.removeEventListener("change", ajaxcoast);
+});
+check4.addEventListener("change", function ajaxpleiades(e) {
 $.ajax({
   method: "GET",
   url:
-    "https://gist.githubusercontent.com/agiano/b65bb8bee66dfbd4e4e3381d565dcfa6/raw/14f0af16eceede3b72eae8cf6e75f1792029a810/bigrivers(10).geojson",
+    "https://gist.githubusercontent.com/agiano/af02d7f99ef1c5be0f4f4d461109143b/raw/eebf0c6fbea7c11e929a90db50b19cf4476f3599/pleiades%2520settlements",
   dataType: "json",
   crossOrigin: "Anonymous",
 }).done(function (data) {
   const dataSource = new ol.source.Vector({
     features: geoJSONformat.readFeatures(data),
   });
+
   const dataLayer = new ol.layer.Vector({
     source: dataSource,
-    style: riverStyle,
+    style: pleiadesStyle,
     renderMode: renderMode,
-    extent: mapExtent,
+    extent: pointBbox,
     visible: false,
-    id: 3,
+    declutter: false,
+    id: 7,
   });
   map.addLayer(dataLayer);
-  if (check3.checked == true) {
+  if (check4.checked == true) {
     dataLayer.setVisible(true);
   } else {
     dataLayer.setVisible(false);
   }
-  check3.addEventListener("change", function (e) {
-    if (check3.checked == true) {
-      dataLayer.setVisible(true);
-    } else {
-      dataLayer.setVisible(false);
-    }
-  });
-})
-check3.removeEventListener("change", ajaxrivers)
-});
-check1.addEventListener("change", function ajaxcoast(e) {
-$.ajax({
-  method: "GET",
-  url:
-    "https://gist.githubusercontent.com/agiano/4b0c212f4038ab5d205b8455ffecf243/raw/68ee974227cff676de7d8de43b8001780006d35c/topo-coast(10).json",
-  dataType: "json",
-  crossOrigin: "Anonymous",
-}).done(function (data) {
-  console.log("ajax loaded")
-  
-  const dataSource = new ol.source.Vector({
-    features: topoJSONformat.readFeatures(data, {
-      dataProjection: "EPSG:4326",
-      featureProjection: projection,
-    }),
-  });
-  const dataLayer = new ol.layer.Vector({
-    source: dataSource,
-    style: coastStyle,
-    renderMode: renderMode,
-    extent: mapExtent,
-    visible: false,
-    id: 4,
-  });
-  map.addLayer(dataLayer);
-  if (check1.checked == true) {
-    dataLayer.setVisible(true);
-  } else {
-    dataLayer.setVisible(false);
-  }
-  check1.addEventListener("change", function (e) {
-    if (check1.checked == true) {
+  check4.addEventListener("change", function (e) {
+    if (check4.checked == true) {
       dataLayer.setVisible(true);
     } else {
       dataLayer.setVisible(false);
     }
   });
 });
-check1.removeEventListener("change", ajaxcoast)
+check4.removeEventListener("change", ajaxpleiades);
 })
-
-// $.ajax({
-//   method: "GET",
-//   url:
-//     "https://gist.githubusercontent.com/agiano/af02d7f99ef1c5be0f4f4d461109143b/raw/eebf0c6fbea7c11e929a90db50b19cf4476f3599/pleiades%2520settlements",
-//   dataType: "json",
-//   crossOrigin: "Anonymous",
-// }).done(function (data) {
-//   const dataSource = new ol.source.Vector({
-//     features: geoJSONformat.readFeatures(data),
-//   });
-
-//   const dataLayer = new ol.layer.Vector({
-//     source: dataSource,
-//     style: pleiadesStyle,
-//     renderMode: renderMode,
-//     extent: mapExtent,
-//     visible: false,
-//     declutter: false,
-//     id: 7,
-//   });
-//   map.addLayer(dataLayer);
-//   check4.addEventListener("change", function (e) {
-//     if (check4.checked == true) {
-//       dataLayer.setVisible(true);
-//     } else {
-//       dataLayer.setVisible(false);
-//     }
-//   });
-// });
-
 //#endregion
 
 //#region //------ Map Interactions ------//
@@ -754,16 +774,22 @@ for (let i = 0; i < drawInput.length; i++) {
 
 // Time
 const yearIncrements = [
+  -1000,
+  -750,
   -500,
-  -400,
-  -300,
-  -200,
-  -100,
+  // -400,
+  // -300,
+  -250,
+  // -200,
+  // -100,
   0,
-  100,
-  200,
+  // 100,
+  // 200,
+  250,
   // 300,
   // 400,
+  500,
+  750,
   // 1250,
   // 1500,
   // 1750,
@@ -919,14 +945,11 @@ $("#slider-3").slider({
     sliderOutput3.innerHTML = e.value / 100;
   },
 });
-// map.on("click", function (e) {
-//   for (let i = 0; i < map.getLayers().array_.length; i++) {
-//     console.log(map.getLayers().array_[i].values_.id);
-//   }
-// });
+
 
 // Popups on feature click //
 
+/*
 const popElement = document.getElementById("popup");
 const popup = new ol.Overlay({
   element: popElement,
@@ -965,24 +988,25 @@ const popup2 = new ol.Overlay({
   offset: [0, -10],
 });
 map.addOverlay(popup);
+*/
 
 map.on("click", function (e) {
-  popup.setPosition(undefined);
+  // popup.setPosition(undefined);
   map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
     // if (layer.id)
     if (layer !== null && layer.values_.id === 7) {
-      let clickedCoordinate = e.coordinate;
-      popup.setPosition(clickedCoordinate);
+      // let clickedCoordinate = e.coordinate;
+      // popup.setPosition(clickedCoordinate);
 
-      console.log(feature.values_);
+      console.log(feature.values_.geometry.flatCoordinates,feature.values_.title,);
 
-      let clickedFeatureName = feature.values_.name;
-      let clickedFeatureStartDate = feature.values_.start_date;
-      let clickedFeatureEndDate = feature.values_.end_date;
+      // let clickedFeatureName = feature.values_.name;
+      // let clickedFeatureStartDate = feature.values_.start_date;
+      // let clickedFeatureEndDate = feature.values_.end_date;
 
-      overLayFeatureName.innerHTML = clickedFeatureName;
-      overLayFeatureStartDate.innerHTML = clickedFeatureStartDate;
-      overLayFeatureEndDate.innerHTML = clickedFeatureEndDate;
+      // overLayFeatureName.innerHTML = clickedFeatureName;
+      // overLayFeatureStartDate.innerHTML = clickedFeatureStartDate;
+      // overLayFeatureEndDate.innerHTML = clickedFeatureEndDate;
     }
   });
 });
@@ -1080,5 +1104,17 @@ function convolve(context, kernel) {
   }
   context.putImageData(output, 0, 0);
 } // end of image filter
+
+// var mousePosition = new ol.control.MousePosition({
+//   coordinateFormat: ol.coordinate.createStringXY(2),
+//   projection: 'EPSG:4326',
+//   target: document.getElementById('myposition'),
+//   undefinedHTML: '&nbsp;'
+// });
+// map.addControl(mousePosition);
+// map.on("click", function (e) {
+ 
+//   console.log(document.getElementsByClassName("ol-mouse-position")[0].innerHTML)
+// });
 
 //#endregion
