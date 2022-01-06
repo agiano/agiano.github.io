@@ -21,8 +21,7 @@ const projection = "EPSG:3857";
 const mapExtent = [-21000000, -20000000, 21000000, 20000000];
 const mapCenter = [2000000, 5000000];
 
-const pointBbox = [11.18, 41, 13, 42.54]
-
+const pointBbox = [11.18, 41, 13, 42.54];
 
 const geoJSONformat = new ol.format.GeoJSON({
   dataProjection: "EPSG:4326",
@@ -32,7 +31,6 @@ const topoJSONformat = new ol.format.TopoJSON({
   layers: ["coastMerged"],
 });
 const esriJSONformat = new ol.format.EsriJSON({});
-
 
 const oceanStyle = function (feature, resolution) {
   return [
@@ -91,9 +89,9 @@ const stateScale = function (feature, resolution) {
   return scale;
 };
 const stateColor = function (feature, resolution) {
-  let color = feature.get("color")
-  return color
-}
+  let color = feature.get("color");
+  return color;
+};
 const stateStyle = function (feature, resolution) {
   return [
     new ol.style.Style({
@@ -201,7 +199,7 @@ const map = new ol.Map({
     projection: projection,
     center: mapCenter,
     zoom: 5,
-    maxZoom: 10.25,
+    maxZoom: 20,
     minZoom: 1,
     extent: mapExtent,
   }),
@@ -219,81 +217,205 @@ const map = new ol.Map({
 
 // Basemaps Layers //
 
-const googleSatellite = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-    attributions: "Map data ©2020 Google",
-    crossOrigin: "anonymous",
-  }),
-  visible: false,
-  title: "googleSatellite",
-});
 const esriWorldImagery = new ol.layer.Tile({
   source: new ol.source.XYZ({
-    url:
-      "https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    url: "https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    crossOrigin: "anonymous",
     attributions:
       'Tiles © <a href="https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer">ArcGIS</a>',
-    crossOrigin: "anonymous",
   }),
   visible: false,
   title: "esriWorldImagery",
 });
-const esriWorldTerrainBase = new ol.layer.Tile({
+const esriWorldTopoMap = new ol.layer.Tile({
   source: new ol.source.XYZ({
-    url:
-      "https://server.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}",
-    attributions:
-      'Tiles © <a href="https://server.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer">ArcGIS</a>',
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
     crossOrigin: "anonymous",
+    attributions:
+      'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
   }),
   visible: false,
-  title: "esriWorldTerrainBase",
-  maxZoom: 9,
-});
-const esriWorldHillshadeLight = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    url:
-      "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
-    attributions:
-      'Tiles © <a href="https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer">ArcGIS</a>',
-    crossOrigin: "anonymous",
-  }),
-  visible: false,
-  title: "esriWorldHillshadeLight",
-  maxZoom: 13,
-});
-const esriWorldHillshadeDark = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    url:
-      "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade_Dark/MapServer/tile/{z}/{y}/{x}",
-    attributions:
-      'Tiles © <a href="https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade_Dark/MapServer">ArcGIS</a>',
-    crossOrigin: "anonymous",
-  }),
-  visible: false,
-  title: "esriWorldHillshadeDark",
+  title: "esriWorldTopoMap",
 });
 const esriWorldOceanBase = new ol.layer.Tile({
   source: new ol.source.XYZ({
-    url:
-      "https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}",
+    url: "https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}",
+    crossOrigin: "anonymous",
     attributions:
       'Tiles © <a href="https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer">ArcGIS</a>',
-    crossOrigin: "anonymous",
   }),
   visible: true,
   title: "esriWorldOceanBase",
 });
+const esriWorldHillshadeLight = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
+    crossOrigin: "anonymous",
+    attributions:
+      'Tiles © <a href="https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer">ArcGIS</a>',
+  }),
+  visible: false,
+  title: "esriWorldHillshadeLight",
+});
+const esriWorldHillshadeDark = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade_Dark/MapServer/tile/{z}/{y}/{x}",
+    crossOrigin: "anonymous",
+    attributions:
+      'Tiles © <a href="https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade_Dark/MapServer">ArcGIS</a>',
+  }),
+  visible: false,
+  title: "esriWorldHillshadeDark",
+});
+const esriWorldPhysicalMap = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}",
+    crossOrigin: "anonymous",
+    attributions:
+      'Tiles © <a href="https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer">ArcGIS</a>',
+  }),
+  visible: false,
+  title: "esriWorldPhysicalMap",
+});
+const esriWorldShadedRelief = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://server.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}",
+    crossOrigin: "anonymous",
+    attributions:
+      'Tiles © <a href="https://server.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer">ArcGIS</a>',
+  }),
+  visible: false,
+  title: "esriWorldShadedRelief",
+});
+const esriWorldTerrainBase = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://server.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}",
+    crossOrigin: "anonymous",
+    attributions:
+      'Tiles © <a href="https://server.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer">ArcGIS</a>',
+  }),
+  visible: false,
+  title: "esriWorldTerrainBase",
+});
+const dareMap = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://dh.gu.se/tiles/imperium/{z}/{x}/{y}.png",
+    attributions:
+      'Map by the University of Gothenburg, Sweden, under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>',
+  }),
+  visible: false,
+  title: "dareMap",
+});
+const osmStandard = new ol.layer.Tile({
+  source: new ol.source.OSM({
+    crossOrigin: "anonymous",
+  }),
+  visible: false,
+  title: "osmStandard",
+});
+const osmHumanitarian = new ol.layer.Tile({
+  source: new ol.source.OSM({
+    url: "https://{a-c}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    crossOrigin: "anonymous",
+  }),
+  visible: false,
+  title: "osmHumanitarian",
+});
+const stamenToner = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "http://tile.stamen.com/toner/{z}/{x}/{y}.png",
+    crossOrigin: "anonymous",
+    attributions:
+      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+  }),
+  visible: false,
+  title: "stamenToner",
+});
+const stamenTerrain = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg",
+    crossOrigin: "anonymous",
+    attributions:
+      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+  }),
+  visible: false,
+  title: "stamenTerrain",
+});
+const stamenWatercolor = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg",
+    attributions:
+      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.',
+  }),
+  visible: false,
+  title: "stamenWatercolor",
+});
+const googleSatellite = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+    attributions: "Map data ©2020 Google",
+  }),
+  visible: false,
+  title: "googleSatellite",
+});
+const googleMaps = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}",
+    crossOrigin: "anonymous",
+    attributions: "Map data ©2020 Google",
+  }),
+  visible: false,
+  title: "googleMaps",
+});
+const googleTerrain = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}",
+    crossOrigin: "anonymous",
+    attributions: "Map data ©2020 Google",
+  }),
+  visible: false,
+  title: "googleTerrain",
+});
+const googleSatelliteHybrid = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+    crossOrigin: "anonymous",
+    attributions: "Map data ©2020 Google",
+  }),
+  visible: false,
+  title: "googleSatelliteHybrid",
+});
+const googleRoads = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: "https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}",
+    crossOrigin: "anonymous",
+    attributions: "Map data ©2020 Google",
+  }),
+  visible: false,
+  title: "googleRoads",
+});
 
 const baseLayerGroup = new ol.layer.Group({
   layers: [
+    esriWorldImagery,
+    esriWorldTopoMap,
+    esriWorldOceanBase,
     esriWorldHillshadeLight,
     esriWorldHillshadeDark,
-    esriWorldOceanBase,
-    googleSatellite,
-    esriWorldImagery,
+    esriWorldPhysicalMap,
+    esriWorldShadedRelief,
     esriWorldTerrainBase,
+    dareMap,
+    osmStandard,
+    osmHumanitarian,
+    stamenToner,
+    stamenTerrain,
+    stamenWatercolor,
+    googleSatellite,
+    googleMaps,
+    googleTerrain,
+    googleSatelliteHybrid,
+    googleRoads,
   ],
   zIndex: 100,
   opacity: 1,
@@ -323,8 +445,7 @@ const renderMode = "image";
 
 $.ajax({
   method: "GET",
-  url:
-    "https://gist.githubusercontent.com/agiano/fcf95837669f13d9d283e97dc8d88100/raw/010c241c083dbfade920df599d8beb91922a85fd/states_data.geojson",
+  url: "https://gist.githubusercontent.com/agiano/fcf95837669f13d9d283e97dc8d88100/raw/87c972081cc1f47e095cde15bc6dfb76bc88229f/states_data.geojson",
   dataType: "json",
   crossOrigin: "Anonymous",
 }).done(function (data) {
@@ -427,8 +548,7 @@ check2.addEventListener("change", function ajaxwater(e) {
 check3.addEventListener("change", function ajaxrivers(e) {
   $.ajax({
     method: "GET",
-    url:
-      "https://gist.githubusercontent.com/agiano/b65bb8bee66dfbd4e4e3381d565dcfa6/raw/14f0af16eceede3b72eae8cf6e75f1792029a810/bigrivers(10).geojson",
+    url: "https://gist.githubusercontent.com/agiano/b65bb8bee66dfbd4e4e3381d565dcfa6/raw/14f0af16eceede3b72eae8cf6e75f1792029a810/bigrivers(10).geojson",
     dataType: "json",
     crossOrigin: "Anonymous",
   }).done(function (data) {
@@ -462,8 +582,7 @@ check3.addEventListener("change", function ajaxrivers(e) {
 check1.addEventListener("change", function ajaxcoast(e) {
   $.ajax({
     method: "GET",
-    url:
-      "https://gist.githubusercontent.com/agiano/4b0c212f4038ab5d205b8455ffecf243/raw/68ee974227cff676de7d8de43b8001780006d35c/topo-coast(10).json",
+    url: "https://gist.githubusercontent.com/agiano/4b0c212f4038ab5d205b8455ffecf243/raw/68ee974227cff676de7d8de43b8001780006d35c/topo-coast(10).json",
     dataType: "json",
     crossOrigin: "Anonymous",
   }).done(function (data) {
@@ -500,42 +619,41 @@ check1.addEventListener("change", function ajaxcoast(e) {
   check1.removeEventListener("change", ajaxcoast);
 });
 check4.addEventListener("change", function ajaxpleiades(e) {
-$.ajax({
-  method: "GET",
-  url:
-    "https://gist.githubusercontent.com/agiano/af02d7f99ef1c5be0f4f4d461109143b/raw/eebf0c6fbea7c11e929a90db50b19cf4476f3599/pleiades%2520settlements",
-  dataType: "json",
-  crossOrigin: "Anonymous",
-}).done(function (data) {
-  const dataSource = new ol.source.Vector({
-    features: geoJSONformat.readFeatures(data),
-  });
+  $.ajax({
+    method: "GET",
+    url: "https://gist.githubusercontent.com/agiano/af02d7f99ef1c5be0f4f4d461109143b/raw/eebf0c6fbea7c11e929a90db50b19cf4476f3599/pleiades%2520settlements",
+    dataType: "json",
+    crossOrigin: "Anonymous",
+  }).done(function (data) {
+    const dataSource = new ol.source.Vector({
+      features: geoJSONformat.readFeatures(data),
+    });
 
-  const dataLayer = new ol.layer.Vector({
-    source: dataSource,
-    style: pleiadesStyle,
-    renderMode: renderMode,
-    extent: pointBbox,
-    visible: false,
-    declutter: false,
-    id: 7,
-  });
-  map.addLayer(dataLayer);
-  if (check4.checked == true) {
-    dataLayer.setVisible(true);
-  } else {
-    dataLayer.setVisible(false);
-  }
-  check4.addEventListener("change", function (e) {
+    const dataLayer = new ol.layer.Vector({
+      source: dataSource,
+      style: pleiadesStyle,
+      renderMode: renderMode,
+      extent: pointBbox,
+      visible: false,
+      declutter: false,
+      id: 7,
+    });
+    map.addLayer(dataLayer);
     if (check4.checked == true) {
       dataLayer.setVisible(true);
     } else {
       dataLayer.setVisible(false);
     }
+    check4.addEventListener("change", function (e) {
+      if (check4.checked == true) {
+        dataLayer.setVisible(true);
+      } else {
+        dataLayer.setVisible(false);
+      }
+    });
   });
+  check4.removeEventListener("change", ajaxpleiades);
 });
-check4.removeEventListener("change", ajaxpleiades);
-})
 //#endregion
 
 //#region //------ Map Interactions ------//
@@ -561,6 +679,26 @@ dragnDrop.on("addfeatures", function (evt) {
   // console.log("new feature added");
 });
 
+// // Modify Dragndrop features //
+
+const feat1 = new ol.interaction.Modify({
+  source: dragSource,
+});
+const feat2 = new ol.interaction.Draw({
+  source: dragSource,
+  type: "Polygon",
+});
+
+// Add Feature Text to Areabox
+
+dragSource.on("change", function () {
+  const features = dragSource.getFeatures();
+  const feat = geoJSONformat.writeFeatures(features);
+  $("#featText").val(feat);
+  // console.log(json);
+});
+
+
 // Drag Box //
 
 // const dragBox = new ol.interaction.DragBox({})
@@ -574,6 +712,7 @@ const drawLayer = new ol.layer.Vector({
   id: 6,
 });
 map.addLayer(drawLayer);
+
 
 const draw1 = new ol.interaction.Modify({
   source: drawSource,
@@ -594,22 +733,6 @@ const draw5 = new ol.interaction.Draw({
   source: drawSource,
   type: "Polygon",
 });
-// const draw6 = new ol.interaction.Draw({
-//   source: drawSource,
-//   type: "MultiPoint",
-// });
-// const draw7 = new ol.interaction.Draw({
-//   source: drawSource,
-//   type: "MultiLineString",
-// });
-// const draw8 = new ol.interaction.Draw({
-//   source: drawSource,
-//   type: "MultiPolygon",
-// });
-// const draw9 = new ol.interaction.Draw({
-//   source: drawSource,
-//   type: "GeometryCollection",
-// });
 
 // File Download //
 function downloadasTextFile(filename, text) {
@@ -655,6 +778,9 @@ clearDrawBtn.onclick = clearDraw;
 clearGeoJSONBtn.onclick = clearGeo;
 
 // Adding Disable Classes
+// 1 is for dragndrop, 2 is for selecting draw option, 3 is for selecing feature option
+
+
 const drawInput = document.querySelectorAll(
   ".sidebar-3 > .content-3 > .layer-list > input[type=radio]"
 );
@@ -663,6 +789,18 @@ for (let i = 0; i < drawInput.length; i++) {
   drawInput[i].classList.add("Disable-1");
 }
 document.getElementsByClassName("button-6")[0].classList.add("Disable-1");
+
+const featSelect1 = document.getElementById("feat-input-0")
+featSelect1.classList.add("Disable-1")
+featSelect1.classList.add("Disable-2")
+const featSelect2 = document.getElementById("feat-input-1")
+featSelect2.classList.add("Disable-1")
+featSelect2.classList.add("Disable-2")
+const featSelect3 = document.getElementById("feat-input-2")
+featSelect3.classList.add("Disable-1")
+featSelect3.classList.add("Disable-2")
+
+
 const filtered = drawInputArray.filter(function (value, index, arr) {
   return index != 0;
 });
@@ -672,18 +810,12 @@ for (let i = 0; i < filtered.length; i++) {
 
 // toggle dragndrop //
 
-$(document).on("click", ".button-1", function (e) {
-  $(".button-1").toggleClass("clicked");
-  e.preventDefault();
-  if ($(".button-1").hasClass("clicked")) {
-    $(".Disable-1").attr("disabled", true);
+$(document).on("click", "#geoBtn", function (e) {
+  $("#geoBtn").toggleClass("clicked");
+  if ($("#geoBtn").hasClass("clicked")) {
     map.addInteraction(dragnDrop);
-    // console.log("clicked" + " " + map.getInteractions().array_.length)
-  } else if (!$(".button-1").hasClass("clicked")) {
-    $(".Disable-1").attr("disabled", false);
-    $(".button-6").attr("disabled", true);
+  } else if (!$("#geoBtn").hasClass("clicked")) {
     map.removeInteraction(dragnDrop);
-    // console.log("not clicked" + " " + map.getInteractions().array_.length)
   }
 });
 
@@ -696,21 +828,21 @@ const drawTrace = new ol.interaction.Snap({
   vertex: true,
   pixelTolerance: 15,
 });
-$(document).on("click", ".button-6", function (e) {
-  $(".button-6").toggleClass("clicked");
+$(document).on("click", "#drawTrace", function (e) {
+  $("#drawTrace").toggleClass("clicked");
   e.preventDefault();
-  if ($(".button-6").hasClass("clicked")) {
+  if ($("#drawTrace").hasClass("clicked")) {
     $(".draw-input-0").attr("disabled", true);
     map.addInteraction(drawTrace);
-  } else if (!$(".button-6").hasClass("clicked")) {
+  } else if (!$("#drawTrace").hasClass("clicked")) {
     $(".draw-input-0").attr("disabled", false);
     map.removeInteraction(drawTrace);
   }
 });
 
-$(".button-6").attr("disabled", true);
+$("#drawTrace").attr("disabled", true);
 
-// toggle draw type
+// toggle draw/feat type
 
 for (let i = 0; i < drawInput.length; i++) {
   drawInput[i].addEventListener("change", function () {
@@ -719,49 +851,63 @@ for (let i = 0; i < drawInput.length; i++) {
         map.getInteractions().array_[map.getInteractions().array_.length - 1]
       );
       $(".Disable-2").attr("disabled", false);
-      $(".button-1").attr("disabled", false);
-      $(".button-6").attr("disabled", true);
+      $("#geoBtn").attr("disabled", false);
+      $("#drawTrace").attr("disabled", true);
     } else if (drawInput[i].value == 1) {
       map.addInteraction(draw1);
       $(".Disable-2").attr("disabled", true);
-      $(".button-1").attr("disabled", true);
-      $(".button-6").attr("disabled", false);
+      $("#geoBtn").attr("disabled", true);
+      $("#drawTrace").attr("disabled", false);
     } else if (drawInput[i].value == 2) {
       map.addInteraction(draw2);
       $(".Disable-2").attr("disabled", true);
-      $(".button-1").attr("disabled", true);
-      $(".button-6").attr("disabled", false);
+      $("#geoBtn").attr("disabled", true);
+      $("#drawTrace").attr("disabled", false);
     } else if (drawInput[i].value == 3) {
       map.addInteraction(draw3);
       $(".Disable-2").attr("disabled", true);
-      $(".button-1").attr("disabled", true);
-      $(".button-6").attr("disabled", false);
+      $("#geoBtn").attr("disabled", true);
+      $("#drawTrace").attr("disabled", false);
     } else if (drawInput[i].value == 4) {
       map.addInteraction(draw4);
       $(".Disable-2").attr("disabled", true);
-      $(".button-1").attr("disabled", true);
-      $(".button-6").attr("disabled", false);
+      $("#geoBtn").attr("disabled", true);
+      $("#drawTrace").attr("disabled", false);
     } else if (drawInput[i].value == 5) {
       map.addInteraction(draw5);
       $(".Disable-2").attr("disabled", true);
-      $(".button-1").attr("disabled", true);
-      $(".button-6").attr("disabled", false);
+      $("#geoBtn").attr("disabled", true);
+      $("#drawTrace").attr("disabled", false);
     }
-    //  else if (drawInput[i].value == 6) {
-    //   map.addInteraction(draw6);
-    //   $(".Disable-2").attr("disabled", true);
-    // } else if (drawInput[i].value == 7) {
-    //   map.addInteraction(draw7);
-    //   $(".Disable-2").attr("disabled", true);
-    // } else if (drawInput[i].value == 8) {
-    //   map.addInteraction(draw8);
-    //   $(".Disable-2").attr("disabled", true);
-    // } else if (drawInput[i].value == 9) {
-    //   map.addInteraction(draw9);
-    //   $(".Disable-2").attr("disabled", true);
-    // }
   });
 }
+const featInput = document.querySelectorAll(
+  ".sidebar-3 > .content-3 > .featEditList > input[type=radio]"
+);
+
+for (let i = 0; i < featInput.length; i++) {
+  featInput[i].addEventListener("change", function (){
+    if (featInput[i].value == 0) {
+      map.removeInteraction(
+        map.getInteractions().array_[map.getInteractions().array_.length - 1]
+      )
+      $(".Disable-2").attr("disabled", false);
+      $("#geoBtn").attr("disabled", false);
+      $("#drawTrace").attr("disabled", true);
+      }else if (featInput[i].value == 1) {
+        map.addInteraction(feat1);
+        $(".Disable-2").attr("disabled", true);
+        $("#geoBtn").attr("disabled", true);
+        $("#drawTrace").attr("disabled", false);
+        $("#feat-input-0").attr("disabled", false)
+      } else if (featInput[i].value == 2) {
+        map.addInteraction(feat2);
+        $(".Disable-2").attr("disabled", true);
+        $("#geoBtn").attr("disabled", true);
+        $("#drawTrace").attr("disabled", false);
+        $("#feat-input-0").attr("disabled", false)
+}})}
+
 
 // console.log(map.getInteractions().a.length) // for OL4
 // console.log(map.getInteractions().array_.length) // for OL6
@@ -774,9 +920,7 @@ for (let i = 0; i < drawInput.length; i++) {
 
 // Time
 const yearIncrements = [
-  -1000,
-  -750,
-  -500,
+  -1000, -750, -500,
   // -400,
   // -300,
   -250,
@@ -788,8 +932,7 @@ const yearIncrements = [
   250,
   // 300,
   // 400,
-  500,
-  750,
+  500, 750,
   // 1250,
   // 1500,
   // 1750,
@@ -885,6 +1028,17 @@ $("#showDraw").click(function () {
     $("#showDraw").html("Hide Drawing Text");
   }
 });
+
+$("#showFeat").click(function () {
+  $("#featText").toggleClass("hidden");
+  if ($("#featText").hasClass("hidden") === true) {
+    $("#showFeat").html("Show Feature Text");
+  }
+  $("#featText").toggleClass("block");
+  if ($("#featText").hasClass("block") === true) {
+    $("#showFeat").html("Hide Feature Text");
+  }
+});
 //#endregion
 
 //#region //------ Map Customization ------//
@@ -946,7 +1100,6 @@ $("#slider-3").slider({
   },
 });
 
-
 // Popups on feature click //
 
 /*
@@ -998,7 +1151,10 @@ map.on("click", function (e) {
       // let clickedCoordinate = e.coordinate;
       // popup.setPosition(clickedCoordinate);
 
-      console.log(feature.values_.geometry.flatCoordinates,feature.values_.title,);
+      console.log(
+        feature.values_.geometry.flatCoordinates,
+        feature.values_.title
+      );
 
       // let clickedFeatureName = feature.values_.name;
       // let clickedFeatureStartDate = feature.values_.start_date;
@@ -1113,7 +1269,7 @@ function convolve(context, kernel) {
 // });
 // map.addControl(mousePosition);
 // map.on("click", function (e) {
- 
+
 //   console.log(document.getElementsByClassName("ol-mouse-position")[0].innerHTML)
 // });
 
