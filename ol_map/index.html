@@ -33,11 +33,16 @@
       integrity="sha512-D2c/nmSVlwoZk29SLwJK8GkLyCyPuNbZ/vZQL/lNzw+o+yXzsbnJt7lK/iCfdBmgyLRDi0qx27gpE8Zb1C6I7g=="
       crossorigin="anonymous"
     /> -->
+
     <!-- ol 6 css -->
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css"
     />
+
+    <!-- <link rel="stylesheet" href="./libraries/v6.4.3-dist/ol.css"> -->
+
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
@@ -49,14 +54,15 @@
   <body>
     <div class="grid-container noselect">
       <div class="grid-1 hidden">
-
-        <hr class="hrule">
+        <hr class="hrule" />
 
         <div id="sidebar-header">
           <div class="menu-container-2 hidden">
             <i class="fas fa-times fa-2x menu-btn-2" title="close sidebar"></i>
           </div>
-          <a class="sidebar-header-text" href="../home/index.html"><div>HOME</div></a>
+          <a class="sidebar-header-text" href="../home/index.html"
+            ><div>HOME</div></a
+          >
         </div>
 
         <hr class="hrule" />
@@ -73,12 +79,19 @@
                   <option class="layer-option" value="googleSatellite">
                     Google Satellite
                   </option>
-                  <option class="layer-option" value="esriWorldImagery">
-                    Esri Satellite
+                  <option class="layer-option" value="googleMaps">
+                    Google Maps
                   </option>
-                  <option class="layer-option" value="esriWorldTerrainBase">
-                    Esri Terrain
+                  <option class="layer-option" value="googleTerrain">
+                    Google Terrain
                   </option>
+                  <option class="layer-option" value="googleSatelliteHybrid">
+                    Google Satellite Hybrid
+                  </option>
+                  <option class="layer-option" value="googleRoads">
+                    Google Roads
+                  </option>
+
                   <option
                     class="layer-option"
                     value="esriWorldOceanBase"
@@ -86,11 +99,35 @@
                   >
                     Esri Ocean
                   </option>
+                  <option class="layer-option" value="esriWorldTerrainBase">
+                    Esri Terrain
+                  </option>
+                  <option class="layer-option" value="esriWorldImagery">
+                    Esri Satellite
+                  </option>
                   <option class="layer-option" value="esriWorldHillshadeLight">
                     Esri Hillshade Light
                   </option>
                   <option class="layer-option" value="esriWorldHillshadeDark">
                     Esri Hillshade Dark
+                  </option>
+                  <option class="layer-option" value="esriWorldTopoMap">
+                    Esri World Topography
+                  </option>
+                  <option class="layer-option" value="esriWorldShadedRelief">
+                    Esri World Shaded Relief
+                  </option>
+                  <option class="layer-option" value="esriWorldPhysicalMap">
+                    Esri World Physical Map
+                  </option>
+                  <option class="layer-option" value="dareMap">
+                    Roman Empire Map
+                  </option>
+                  <option class="layer-option" value="osmStandard">
+                    OSM Standard
+                  </option>
+                  <option class="layer-option" value="osmHumanitarian">
+                    OSM Humanitarian
                   </option>
                 </select>
               </div>
@@ -189,12 +226,47 @@
           <div class="content content-3">
             <p class="sidebar-label">JSON Features:</p>
 
-            <button class="button button-1" id="geoBtn">Drag in JSON</button
+            <button class="button button-1" id="geoBtn">Drag in Features</button
             ><br />
-            <button class="button button-2" id="geoClear">Clear JSON</button
+            <button class="button button-2" id="geoClear">Clear Features</button
             ><br />
 
+            <button class="button button-7" id="showFeat">
+              Show Feature Text</button
+            ><br />
+            <textarea class="hidden" id="featText" rows="3"></textarea>
+
+
+            <div class="featEditList">
+              <input
+                class="feat-input"
+                id="feat-input-0"
+                type="radio"
+                name="featLayerRadioButton"
+                value="0"
+                checked
+              />None / New Feature<br />
+              <input
+                class="feat-input"
+                id="feat-input-1"
+                type="radio"
+                name="featLayerRadioButton"
+                value="1"
+              />Modify Features<br />
+              <input
+                class="feat-input" 
+                id="feat-input-2"
+                type="radio"
+                name="featLayerRadioButton"
+                value="2"
+              />Polygon<br />
+              </div>
+
+
+
             <p class="sidebar-label">Draw:</p>
+
+
             <button class="button button-3" id="clearDraw">
               Clear Drawings</button
             ><br />
@@ -374,10 +446,13 @@
           </div>
         </div>
         <hr class="hrule" />
+        <div id="myposition"></div>
+        <p id="coordinatePosition"></p>
+        
       </div>
       <div class="grid-2">
         <div id="map" class="map">
-          <div id="popup" class="overlayer-container noselect">
+          <!-- <div id="popup" class="overlayer-container noselect">
             <div class="popup-head">
               <span class="overlay-text" id="feature-name"></span><br />
             </div>
@@ -385,13 +460,12 @@
               <span class="overlay-text" id="feature-start-date"></span><br />
               <span class="overlay-text" id="feature-end-date"></span><br />
             </div>
-          </div>
+          </div> -->
         </div>
 
         <div class="menu-container-1">
           <i class="fas fa-bars fa-2x menu-btn-1"></i>
         </div>
-        
       </div>
     </div>
 
