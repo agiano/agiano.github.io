@@ -8,7 +8,7 @@
   --yellow: #fff5a7;
   --black: #3a3a3a;
   --white: #ffffff;
-  --color: rgb(47, 115, 187);
+  --color: rgb(136, 34, 34);
 }
 
 * {
@@ -402,7 +402,7 @@ body {
   border-color: var(--red) transparent transparent transparent;
 }
 
-#json-val {
+textarea {
   width: 100%;
   border-style: solid;
   border-color: var(--blue);
@@ -460,4 +460,8 @@ body {
   .grid-1 {
     width: 100%;
   }
+}
+#ol-mouse-position {
+  width: 60px;
+  height: 30px;
 }
