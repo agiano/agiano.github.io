@@ -35,3 +35,8 @@ liBtn.addEventListener("click", () => {
 ghBtn.addEventListener("click", () => {
   window.open("https://github.com/agiano","_blank")
 })
+
+const historyMapBtn = document.getElementById("p3")
+historyMapBtn.addEventListener("click", () => {
+  window.open("https://agiano.github.io/history_map")
+})
