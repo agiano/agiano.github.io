@@ -1,25 +1,60 @@
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>website</title>
-  <link rel="stylesheet" href="./styles.css">
-</head>
-<body>
-  <div class="grid-container" src>
-    <div class="main-header">
-      <p class="main-header-title">my website</p>
-      <a href="./index.html" class="main-header-btn btn1">Home</a>
-      <a href="./links/index.html" class="main-header-btn btn2">Links</a>
-      <a href="#" class="main-header-btn btn3">Other</a>
-      <a href="#" class="main-header-btn btn4">About</a>
-    </div>
-    <div class="main-content">
-      <p class="main-content-header">Welcome</p>
-    </div>
-    <div class="main-footer"></div>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Website</title>
 
-  <!-- <script src="./main.js"></script> -->
-</body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="header">
+      <div id="headerTitle">Personal Website</div>
+      <div id="homeBtn">Home</div>
+      <div id="aboutBtn">About</div>
+      <div id="otherBtn">Other Sites</div>
+    </div>
+    <div id="homePage" class="content">
+      <div class="homePageTitle">PROJECTS</div>
+
+      <div id="projectsFlex">
+        <div id="projectsGrid">
+          <div class="project">Online Resume</div>
+          <div class="project">Gym Progress Tracker</div>
+          <div class="project">Map of History</div>
+
+          <div class="project">Color Theme Generator</div>
+          <div class="project">Data Preprocessor</div>
+          <div class="project">Automated Machine Learning</div>
+          <div class="project">Business Evaluator</div>
+          <div class="project">Stock Predictor</div>
+        </div>
+      </div>
+      <!-- <div class="contentTitle">Some other things I've created:</div>
+    <div id="essaysContainer"></div> -->
+    </div>
+    <div id="aboutPage" class="content" hidden>
+      <div id="aboutPageTitle">About</div>
+      <div id="aboutText">
+        Hello, this is a website to organize all my web projects and showcase anything cool I make. Through these works, I hope to gain a better understanding of how the internet works while creating some interesting websites. Enjoy!
+        <br><br>
+        - Alex
+      </div>
+    </div>
+    <div id="otherPage" class="content" hidden></div>
+
+    <div id="footer">
+      <div id="footerText">By Alexandros Giannopoulos</div>
+      <div id="footerButtons">
+        <i id="igBtn" class="fa-brands fa-instagram"></i>
+        <i id="liBtn" class="fa-brands fa-linkedin"></i>
+        <i id="ghBtn" class="fa-brands fa-github"></i>
+      </div>
+    </div>
+
+    <script
+      src="https://kit.fontawesome.com/2bdabfbc43.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="script.js"></script>
+  </body>
 </html>
